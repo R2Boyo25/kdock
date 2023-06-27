@@ -1,7 +1,9 @@
+#if HAVE_CONFIG_H
+# include <config.h>
+#endif
 #include <cairo-xlib.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include <config.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -56,14 +58,14 @@ void rounded_rect(
 }
 
 void cairo_rounded_rectangle(cairo_t * cr, double x, double y, double width, double height, double radius) {
-	double degrees = M_PI / 180.0;
+  double degrees = M_PI / 180.0;
 
-	cairo_new_sub_path(cr);
-	cairo_arc (cr, x + width - radius, y + radius, radius, -90 * degrees, 0 * degrees);
-	cairo_arc (cr, x + width - radius, y + height - radius, radius, 0 * degrees, 90 * degrees);
-	cairo_arc (cr, x + radius, y + height - radius, radius, 90 * degrees, 180 * degrees);
-	cairo_arc (cr, x + radius, y + radius, radius, 180 * degrees, 270 * degrees);
-	cairo_close_path(cr);
+  cairo_new_sub_path(cr);
+  cairo_arc (cr, x + width - radius, y + radius, radius, -90 * degrees, 0 * degrees);
+  cairo_arc (cr, x + width - radius, y + height - radius, radius, 0 * degrees, 90 * degrees);
+  cairo_arc (cr, x + radius, y + height - radius, radius, 90 * degrees, 180 * degrees);
+  cairo_arc (cr, x + radius, y + radius, radius, 180 * degrees, 270 * degrees);
+  cairo_close_path(cr);
 }
 
 void paint(Window w) {
@@ -73,17 +75,13 @@ void paint(Window w) {
 
   cairo_set_line_width(cairo, 5);
   cairo_set_source_rgb(cairo, 255, 255, 255);
-  //cairo_rectangle(shape_cairo, 0, 1, taskbar_width-2, taskbar_height-1); // border
   cairo_stroke(cairo);
 
   cairo_set_operator(shape_cairo, CAIRO_OPERATOR_CLEAR);
-  //cairo_rectangle(shape_cairo, 0, 0, taskbar_width, taskbar_height);
   cairo_fill(shape_cairo);
 
   cairo_set_line_width(shape_cairo, 1);
   cairo_set_operator(shape_cairo, CAIRO_OPERATOR_OVER);
-  //cairo_rectangle(shape_cairo, 0, 1, taskbar_width-2, taskbar_height - 1); // border
-  //rounded_rect(shape_cairo, 0, 0, taskbar_width, taskbar_height, 1, 24);
   cairo_rounded_rectangle(shape_cairo, 0, 0, taskbar_width, taskbar_height, 12 * scaling_ratio);
   cairo_stroke_preserve(shape_cairo);
   cairo_fill(shape_cairo);
@@ -109,7 +107,7 @@ ScreenDimensions screen_dimensions(Display *dpy) {
 # if HAVE_X11_EXTENSIONS_XRANDR_H
   int xrandr_num_sizes = 0;
   XRRScreenSize *xrandr_screen_config = XRRSizes(dpy, 
-                                          screen_id, &xrandr_num_sizes);
+                                                 screen_id, &xrandr_num_sizes);
 
   if (xrandr_num_sizes == 0) {
     fprintf(stderr, "Error: XRandR is unsupported by the current machine.");
@@ -168,11 +166,11 @@ int main() {
     printf("Got event: %d\n", e.type);
 
     switch (e.type) {
-      case MapNotify:
-      case ConfigureNotify:
-      case Expose:
-        paint(w);
-        break;
+    case MapNotify:
+    case ConfigureNotify:
+    case Expose:
+      paint(w);
+      break;
     }
   }
 
