@@ -7,6 +7,10 @@ CLEANFILES      := *~ \#*\#
 CXXFLAGS         = -Ofast -Wall -Wextra -Wpedantic -g
 CFLAGS           = -Ofast -Wall -Wextra -Wpedantic -g
 
-AM_CXXFLAGS     := -std=c++17 $(shell pkg-config xext x11 cairo-xlib-xrender $(XRANDR) $(XINERAMA) --cflags --libs)
-AM_CFLAGS       := -std=c17 $(shell pkg-config xext x11 cairo-xlib-xrender $(XRANDR) $(XINERAMA) --cflags --libs)
+PKG_CONFIG      := $(shell pkg-config xext x11 cairo-xlib-xrender --cflags --libs) \
+                   $(shell pkg-config xrandr --cflags --libs --silence-errors) \
+                   $(shell pkg-config xinerama --cflags --libs --silence-errors)
+
+AM_CXXFLAGS     := -std=c++17 $(PKG_CONFIG) 
+AM_CFLAGS       := -std=c17 $(PKG_CONFIG)
 
