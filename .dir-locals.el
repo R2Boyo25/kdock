@@ -1,1 +1,1 @@
-((nil . ((compile-command . "autoreconf -i && ./configure && make"))))
+((nil . ((compile-command . "make -k"))))

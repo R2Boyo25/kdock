@@ -1,0 +1,2 @@
+-std=c++17
+(pkg-config xext x11 cairo-xlib-xrender xrandr --cflags --libs)
