@@ -1,0 +1,23 @@
+# Executable and object files
+/kdock
+*.o
+
+# Emacs temporary files
+*~
+\#*\#
+
+# Automake files
+*.deps
+*.tar.gz
+*.dirstamp
+/aclocal.m4 
+/configure 
+/depcomp 
+/install-sh 
+/missing 
+/autom4te.cache
+/compile
+/Makefile.in
+/config.log
+/config.status
+/Makefile
