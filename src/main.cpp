@@ -1,12 +1,16 @@
+#include <X11/X.h>
 #if HAVE_CONFIG_H
 # include <config.h>
 #endif
+
 #include <cairo-xlib.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <X11/keysymdef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+
 #include <X11/extensions/shape.h>
 #if HAVE_X11_EXTENSIONS_XINERAMA_H
 # include <X11/extensions/Xinerama.h>
@@ -22,6 +26,8 @@ double scaling_ratio;
 int taskbar_margin = 12;
 int taskbar_height = 56;
 int taskbar_width;
+int screen_width;
+int screen_height;
 
 static cairo_surface_t *surface;
 static cairo_t *cairo;
@@ -30,32 +36,6 @@ static Display *dpy;
 static cairo_surface_t *shape_surface;
 static cairo_t *shape_cairo;
 static Pixmap shape;
-
-void rounded_rect(
-                  cairo_t *cr,
-                  double x,        /* parameters like cairo_rectangle */
-                  double y,
-                  double width,
-                  double height,
-                  double aspect,     /* aspect ratio */
-                  double corner_radius) {
-
-  double radius = corner_radius / aspect;
-  double degrees = M_PI / 180.0;
-
-  cairo_new_sub_path (cr);
-  cairo_arc (cr, x + width - radius, y + radius, radius, -90 * degrees, 0 * degrees);
-  cairo_arc (cr, x + width - radius, y + height - radius, radius, 0 * degrees, 90 * degrees);
-  cairo_arc (cr, x + radius, y + height - radius, radius, 90 * degrees, 180 * degrees);
-  cairo_arc (cr, x + radius, y + radius, radius, 180 * degrees, 270 * degrees);
-  cairo_close_path (cr);
-
-  cairo_set_source_rgb (cr, 0.5, 0.5, 1);
-  cairo_fill_preserve (cr);
-  cairo_set_source_rgba (cr, 0.5, 0, 0, 0.5);
-  cairo_set_line_width (cr, 10.0);
-  cairo_stroke (cr);
-}
 
 void cairo_rounded_rectangle(cairo_t * cr, double x, double y, double width, double height, double radius) {
   double degrees = M_PI / 180.0;
@@ -121,24 +101,29 @@ ScreenDimensions screen_dimensions(Display *dpy) {
   return {screen_width, screen_height};
 }
 
-int main() {  
+void updateScreenSize() {
+  ScreenDimensions screen_dim = screen_dimensions(dpy);
+  scaling_ratio   = std::max((double)screen_dim.width / 1920, 1.0);
+  screen_width    = screen_dim.width;
+  screen_height   = screen_dim.height;
+  taskbar_height *= scaling_ratio;
+  taskbar_width   = screen_dim.width - (2 * taskbar_margin);
+
+  printf("W%d H%d S%lf\n", taskbar_width, taskbar_height, scaling_ratio);
+}
+
+Window initializeWindow() {
   dpy = XOpenDisplay(NULL);
   if (dpy == NULL) {
     fprintf(stderr, "Error: Can't open display. Is DISPLAY set?\n");
-    return 1;
+    std::exit(1);
   }
-  
-  ScreenDimensions screen_dim = screen_dimensions(dpy);
-  scaling_ratio = std::max((double)screen_dim.width / 1920, 1.0);
-  screen_dim.width = 372 * scaling_ratio;
-  taskbar_height *= scaling_ratio;
-  taskbar_width               = screen_dim.width - (2 * taskbar_margin);
 
-  printf("W%d H%d S%lf\n", taskbar_width, taskbar_height, scaling_ratio);
+  updateScreenSize();
   
   Window w;
   w = XCreateSimpleWindow(dpy, RootWindow(dpy, 0),
-                          taskbar_margin, screen_dim.height - taskbar_height - taskbar_margin, taskbar_width, taskbar_height, 0, 0, BlackPixel(dpy, 0));
+                          taskbar_margin, screen_height - taskbar_height - taskbar_margin, taskbar_width, taskbar_height, 0, 0, BlackPixel(dpy, 0));
   
   XSetWindowAttributes winattr;
   winattr.override_redirect = 1;
@@ -147,6 +132,10 @@ int main() {
   XSelectInput(dpy, w, StructureNotifyMask | ExposureMask);
   XMapWindow(dpy, w);
 
+  return w;
+}
+
+void initializeCairo(Window w) {
   surface = cairo_xlib_surface_create(dpy, w, DefaultVisual(dpy, 0), taskbar_width, taskbar_height);
   cairo = cairo_create(surface);
 
@@ -156,16 +145,27 @@ int main() {
                                                        taskbar_width, taskbar_height);
   
   shape_cairo = cairo_create(shape_surface);
+}
 
+#warn TODO: get_visible_windows
+
+void hide_unhide(Window w) {
   
-  
+}
+
+int main() {  
+  Window w = initializeWindow();
+  initializeCairo(w);
   
   while (1) {
     XEvent e;
     XNextEvent(dpy, &e);
     printf("Got event: %d\n", e.type);
-
+ 
     switch (e.type) {
+    case MotionNotify:
+      
+      break;
     case MapNotify:
     case ConfigureNotify:
     case Expose:

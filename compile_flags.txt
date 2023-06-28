@@ -1,2 +1,10 @@
 -std=c++17
-(pkg-config xext x11 cairo-xlib-xrender xrandr --cflags --libs)
+-I/usr/include/cairo
+-I/usr/include/lzo
+-I/usr/include/libpng16
+-I/usr/include/freetype2
+-I/usr/include/harfbuzz
+-I/usr/include/glib-2.0
+-I/usr/lib64/glib-2.0/include
+-I/usr/include/pixman-1
+-I.

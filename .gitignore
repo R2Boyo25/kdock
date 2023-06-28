@@ -10,16 +10,21 @@
 *.deps
 *.tar.gz
 *.dirstamp
+
 /aclocal.m4 
+/autom4te.cache
+
 /configure 
+
 /depcomp 
 /install-sh 
 /missing 
-/autom4te.cache
 /compile
-/Makefile.in
+
 /config.log
 /config.status
+
+/Makefile.in
 /Makefile
 
 /config.h

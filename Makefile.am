@@ -1,7 +1,7 @@
 AUTOMAKE_OPTIONS = foreign
 bin_PROGRAMS     = kdock
 
-kdock_SOURCES    = src/main.cpp
+kdock_SOURCES    = src/main.cpp src/collision.cpp src/collision.hpp
 CLEANFILES      := *~ \#*\#
 
 CXXFLAGS         = -Ofast -Wall -Wextra -Wpedantic -g
