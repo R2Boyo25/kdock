@@ -26,9 +26,12 @@ struct Element {
 
   virtual void predraw(cairo_t *cr);
   virtual void postdraw(cairo_t *cr);
+
+#warning add clone()
+#warning add methods for setting the style of ygnode
   
   YGNodeRef ygnode;
-  #warning color not changing
+#warning color not changing
   Color color = Color {200, 0, 200, 255};
   
 private:

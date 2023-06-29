@@ -17,3 +17,6 @@ PKG_CONFIG      := $(shell pkg-config xext x11 cairo-xlib-xrender --cflags --lib
 
 AM_CXXFLAGS     := -std=c++17 $(PKG_CONFIG) -Ilibs/yogapp/libs/yoga
 AM_CFLAGS       := -std=c17 $(PKG_CONFIG) -Ilibs/yogapp/libs/yoga
+
+libs/yogapp/libs/yoga/build/yoga/libyogacore.a:
+	make -C libs/yogapp
