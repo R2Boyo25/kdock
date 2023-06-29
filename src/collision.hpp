@@ -3,11 +3,12 @@
 
 // axis-aligned bounding box
 typedef struct {
-  int x;
-  int y;
-  int width;
-  int height;
+  double x;
+  double y;
+  double width;
+  double height;
 } aabb;
 
 bool aabb_collision(aabb other, aabb me);
 bool aabb_collision(std::vector<aabb> others, aabb me);
+void print_aabb(aabb bb);

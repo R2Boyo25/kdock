@@ -6,10 +6,13 @@
 #include <cairo-xlib.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include <X11/keysymdef.h>
+//#include <X11/keysymdef.h>
+#include <X11/Xatom.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <vector>
 
 #include <X11/extensions/shape.h>
 #if HAVE_X11_EXTENSIONS_XINERAMA_H
@@ -22,12 +25,17 @@
 # endif
 #endif
 
+#include "collision.hpp"
+#include "layout.hpp"
+
 double scaling_ratio;
 int taskbar_margin = 12;
 int taskbar_height = 56;
 int taskbar_width;
+int taskbar_gap = 9;
 int screen_width;
 int screen_height;
+Element root_element;
 
 static cairo_surface_t *surface;
 static cairo_t *cairo;
@@ -37,34 +45,9 @@ static cairo_surface_t *shape_surface;
 static cairo_t *shape_cairo;
 static Pixmap shape;
 
-void cairo_rounded_rectangle(cairo_t * cr, double x, double y, double width, double height, double radius) {
-  double degrees = M_PI / 180.0;
-
-  cairo_new_sub_path(cr);
-  cairo_arc (cr, x + width - radius, y + radius, radius, -90 * degrees, 0 * degrees);
-  cairo_arc (cr, x + width - radius, y + height - radius, radius, 0 * degrees, 90 * degrees);
-  cairo_arc (cr, x + radius, y + height - radius, radius, 90 * degrees, 180 * degrees);
-  cairo_arc (cr, x + radius, y + radius, radius, 180 * degrees, 270 * degrees);
-  cairo_close_path(cr);
-}
-
 void paint(Window w) {
-  cairo_set_source_rgb(cairo, 0, 0, 0);
-  cairo_rectangle(cairo, 0, 0, 200, 200);
-  cairo_fill(cairo);
-
-  cairo_set_line_width(cairo, 5);
-  cairo_set_source_rgb(cairo, 255, 255, 255);
-  cairo_stroke(cairo);
-
-  cairo_set_operator(shape_cairo, CAIRO_OPERATOR_CLEAR);
-  cairo_fill(shape_cairo);
-
-  cairo_set_line_width(shape_cairo, 1);
-  cairo_set_operator(shape_cairo, CAIRO_OPERATOR_OVER);
-  cairo_rounded_rectangle(shape_cairo, 0, 0, taskbar_width, taskbar_height, 12 * scaling_ratio);
-  cairo_stroke_preserve(shape_cairo);
-  cairo_fill(shape_cairo);
+  root_element.recalc(taskbar_width, taskbar_height);
+  root_element.draw(shape_cairo);
   
   XShapeCombineMask(dpy, w, ShapeBounding, 0, 0, 
                     cairo_xlib_surface_get_drawable(shape_surface), ShapeSet);
@@ -108,6 +91,7 @@ void updateScreenSize() {
   screen_height   = screen_dim.height;
   taskbar_height *= scaling_ratio;
   taskbar_width   = screen_dim.width - (2 * taskbar_margin);
+  taskbar_gap    *= scaling_ratio;
 
   printf("W%d H%d S%lf\n", taskbar_width, taskbar_height, scaling_ratio);
 }
@@ -147,20 +131,33 @@ void initializeCairo(Window w) {
   shape_cairo = cairo_create(shape_surface);
 }
 
-#warn TODO: get_visible_windows
+#warning TODO: get_visible_windows
+std::vector<Window> get_visible_windows() {
+  Atom ret;
+  int format, status;
+  unsigned char* data = 0;
+  unsigned long nitems, after;
+  
+  XGetWindowProperty(dpy, RootWindow(dpy, 0), XInternAtom(dpy, "_NET_CLIENT_LIST", true), 0, 0, false, XA_WINDOW, &ret, &format, &nitems, &after, &data);
+}
 
+#warning TODO: hide_unhide
 void hide_unhide(Window w) {
   
 }
 
-int main() {  
+int main() {
   Window w = initializeWindow();
   initializeCairo(w);
+
+  //get_visible_windows();
+
+  layoutTest();
   
   while (1) {
     XEvent e;
     XNextEvent(dpy, &e);
-    printf("Got event: %d\n", e.type);
+    //printf("Got event: %d\n", e.type);
  
     switch (e.type) {
     case MotionNotify:

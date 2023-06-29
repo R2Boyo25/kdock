@@ -1,0 +1,28 @@
+/libyogapp.a
+
+# Emacs temporary files
+*~
+\#*\#
+
+# Automake files
+*.deps
+*.tar.gz
+*.dirstamp
+
+/aclocal.m4 
+/autom4te.cache
+
+/configure 
+
+/depcomp 
+/install-sh 
+/missing 
+/compile
+
+/config.log
+/config.status
+
+/Makefile.in
+/Makefile
+
+/libs
