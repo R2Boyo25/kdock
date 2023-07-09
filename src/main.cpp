@@ -53,9 +53,10 @@ void paint(Window w) {
                     cairo_xlib_surface_get_drawable(shape_surface), ShapeSet);
 }
 
+/// The dimensions of a screen.
 typedef struct {
-  int width;
-  int height;
+  int width; ///< The width of the screen.
+  int height; ///< The height of the screen.
 } ScreenDimensions;
 
 ScreenDimensions screen_dimensions(Display *dpy) {

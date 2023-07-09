@@ -16,6 +16,8 @@ Element::~Element() {
 }
 
 void Element::addChild(Element *child) {
+  child->parent = this;
+  
   this->children.push_back(child);
   
   YGNodeRemoveAllChildren(this->ygnode);
@@ -44,12 +46,12 @@ aabb Element::asAABB() {
 
 void Element::draw(cairo_t *cr) {
   printf("Element: ");
+  this->predraw(cr);
   this->drawChildren(cr);
+  this->postdraw(cr);
 }
 
-void Element::drawChildren(cairo_t *cr) {
-  this->predraw(cr);
-  
+void Element::drawChildren(cairo_t *cr) { 
   for (auto& child : this->children) {
     child->draw(cr);
   }
@@ -63,6 +65,16 @@ void Element::predraw(cairo_t *cr) {
 
 void Element::postdraw(cairo_t *cr) {
   (void) cr;
+}
+
+Element *Element::getRoot() {
+  Element *target = this;
+
+  while (target->parent != nullptr) {
+    target = target->parent;
+  }
+
+  return target;
 }
 
 void cairo_rounded_rectangle(cairo_t *cr, double x, double y, double width, double height, double radius) {
@@ -82,15 +94,17 @@ void cairo_rounded_rectangle(cairo_t *cr, double x, double y, double width, doub
   cairo_close_path(cr);
 }
 
-RoundedRect::RoundedRect() {
+Box::Box() {
 
 }
 
-RoundedRect::RoundedRect(double radius) {
+Box::Box(double radius) {
   this->radius = radius;
 }
 
-void RoundedRect::draw(cairo_t *cr) {
+void Box::draw(cairo_t *cr) {
+  this->predraw(cr);
+  
   aabb bb = this->asAABB();
   cairo_rounded_rectangle(cr, bb.x, bb.y, bb.width, bb.height, this->radius);
   cairo_fill(cr);
@@ -115,15 +129,15 @@ void layoutTest() {
   YGNodeStyleSetWidth(taskbar_node, 300 * scaling_ratio);
   YGNodeStyleSetHeightPercent(taskbar_node, 100.0);
   
-  RoundedRect *taskbar_element = new RoundedRect(15 * scaling_ratio);
+  Box *taskbar_element = new Box(15 * scaling_ratio);
   taskbar_element->ygnode = taskbar_node;
   root_element.addChild(taskbar_element);
   
-  RoundedRect *taskbar_element_2 = new RoundedRect(15 * scaling_ratio);
+  Box *taskbar_element_2 = new Box(15 * scaling_ratio);
   taskbar_element_2->ygnode = YGNodeClone(taskbar_node);
   root_element.addChild(taskbar_element_2);
 
-  RoundedRect *taskbar_element_3 = new RoundedRect(15 * scaling_ratio);
+  Box *taskbar_element_3 = new Box(15 * scaling_ratio);
   taskbar_element_3->ygnode = YGNodeClone(taskbar_node);
   root_element.addChild(taskbar_element_3);
   

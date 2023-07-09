@@ -1,0 +1,3 @@
+- Flex Layout Engine: http://github.com/facebook/yoga
+- CSS Parsing and Selector Engine: http://www.netsurf-browser.org/projects/libcss
+- XML Parsing: LibXML2

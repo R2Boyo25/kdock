@@ -1,3 +1,6 @@
 [submodule "libs/yogapp/libs/yoga"]
 	path = libs/yogapp/libs/yoga
 	url = https://github.com/facebook/yoga
+[submodule "docs/doxygen-awesome-css"]
+	path = docs/doxygen-awesome-css
+	url = https://github.com/jothepro/doxygen-awesome-css.git

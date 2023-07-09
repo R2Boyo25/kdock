@@ -8,8 +8,8 @@ bool aabb_collision(aabb other, aabb me) {
          other.y + other.height > me.y;
 }
 
-void print_aabb(aabb bb) {
-  printf("X%lf Y%lf W%lf H%lf\n", bb.x, bb.y, bb.width, bb.height);
+void print_aabb(aabb bb, FILE *fd) {
+  fprintf(fd, "X%lf Y%lf W%lf H%lf\n", bb.x, bb.y, bb.width, bb.height);
 }
 
 bool aabb_collision(std::vector<aabb> others, aabb me) {
