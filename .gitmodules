@@ -1,0 +1,3 @@
+[submodule "libs/mkshift"]
+	path = libs/mkshift
+	url = https://github.com/r2boyo25/mkshift
