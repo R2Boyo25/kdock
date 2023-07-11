@@ -8,4 +8,5 @@
 -I/usr/lib64/glib-2.0/include
 -I/usr/include/pixman-1
 -I.
+-Ilibs/mkshift
 -Ilibs/mkshift/libs/yoga/yoga
