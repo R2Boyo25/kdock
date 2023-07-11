@@ -25,8 +25,8 @@
 # endif
 #endif
 
-#include "collision.hpp"
-#include "layout.hpp"
+#include <mkshift/collision.hpp>
+#include <mkshift/layout.hpp>
 
 double scaling_ratio;
 int taskbar_margin = 12;

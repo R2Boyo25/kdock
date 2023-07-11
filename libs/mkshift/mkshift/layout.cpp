@@ -1,5 +1,4 @@
 #include "layout.hpp"
-#include "yoga/Yoga.h"
 
 extern int taskbar_height;
 extern int taskbar_width;
