@@ -7,7 +7,7 @@
 #include <vector>
 #include <stdio.h>
 
-/// Axis-Aligned Bounding-Box
+/// @brief Axis-Aligned Bounding-Box
 typedef struct {
   double x;      ///< X position of top left
   double y;      ///< Y position of top left

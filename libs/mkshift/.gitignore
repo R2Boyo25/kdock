@@ -1,6 +1,5 @@
-# Executable and object files
-/kdock
-*.o
+/libmkshift.la
+/.libs
 
 # Emacs temporary files
 *~
@@ -23,17 +22,15 @@
 
 /config.log
 /config.status
-/config.guess
 /config.sub
+/config.guess
+/config.h.in
+/config.h
+/stamp-h1
 
 /Makefile.in
 /Makefile
 
-/config.h
-/config.h.in
-/stamp-h1
-
-/confdefs.h
-
-/ltmain.sh
 /libtool
+
+/m4

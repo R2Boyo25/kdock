@@ -1,4 +1,7 @@
-/libyogapp.a
+/libyoga.a
+/libyoga.la
+*.lo
+/.libs
 
 # Emacs temporary files
 *~
@@ -21,8 +24,15 @@
 
 /config.log
 /config.status
+/config.guess
+/config.sub
 
 /Makefile.in
 /Makefile
 
-/libs/yoga/*
+/yoga/*
+/yoga/.vscode/*
+/m4
+
+/ltmain.sh
+/libtool

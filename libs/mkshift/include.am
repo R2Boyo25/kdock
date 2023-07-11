@@ -1,0 +1,6 @@
+include $(srcdir)/%reldir%/libs/yoga/include.am
+
+INCLUDEMKSHIFT := -I%reldir% $(INCLUDEYOGA) \
+                  $(shell pkg-config xext x11 cairo-xlib-xrender --cflags --libs) \
+                  $(shell pkg-config xrandr --cflags --libs --silence-errors) \
+                  $(shell pkg-config xinerama --cflags --libs --silence-errors)
