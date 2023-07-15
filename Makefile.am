@@ -7,7 +7,7 @@ SUBDIRS          = libs/mkshift
 bin_PROGRAMS     = kdock
 
 kdock_SOURCES    = src/main.cpp
-kdock_LDADD      = libs/mkshift/libmkshift.a libs/mkshift/libs/yoga/libyoga.a
+kdock_LDADD      = libs/mkshift/libmkshift.a libs/mkshift/libs/yoga/libyoga.a $(LINKMKSHIFT)
 CLEANFILES      := $(shell find . -wholename "*~") $(shell find -name "#*#")
 
 CXXFLAGS         = -Ofast -Wall -Wextra -Wpedantic

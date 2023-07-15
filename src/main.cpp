@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @brief A highly customizable Linux dock using MkShift.
+ */
+
 #include <X11/X.h>
 #if HAVE_CONFIG_H
 # include <config.h>
@@ -28,14 +33,14 @@
 #include <mkshift/collision.hpp>
 #include <mkshift/layout.hpp>
 
-double scaling_ratio;
-int taskbar_margin = 12;
-int taskbar_height = 56;
-int taskbar_width;
-int taskbar_gap = 9;
-int screen_width;
-int screen_height;
-Element root_element;
+double scaling_ratio; ///< ratio to multiple sizes by
+int taskbar_margin = 12; ///< the margin of the taskbar
+int taskbar_height = 56; ///< the height of the taskbar
+int taskbar_width; ///< the width of the taskbar
+int taskbar_gap = 9; ///< the space between taskbar groups.
+int screen_width; ///< width of the main screen.
+int screen_height; ///< height of the main screen.
+Element root_element; ///< the root MkShift Element 
 
 static cairo_surface_t *surface;
 static cairo_t *cairo;
@@ -45,6 +50,11 @@ static cairo_surface_t *shape_surface;
 static cairo_t *shape_cairo;
 static Pixmap shape;
 
+/**
+ * @brief Recalculate and redraw root_element;
+ *
+ * @param w The Window to draw to.
+ */
 void paint(Window w) {
   root_element.recalc(taskbar_width, taskbar_height);
   root_element.draw(shape_cairo);
@@ -53,12 +63,21 @@ void paint(Window w) {
                     cairo_xlib_surface_get_drawable(shape_surface), ShapeSet);
 }
 
-/// The dimensions of a screen.
+/// @brief The dimensions of a screen.
 typedef struct {
   int width; ///< The width of the screen.
   int height; ///< The height of the screen.
 } ScreenDimensions;
 
+
+/**
+ * @brief Query the screen dimensions of the main screen
+ *
+ * TODO: add a way to select which monitor to check
+ * Uses Xinerama or XRandR, preferring Xinerama.
+ * @param dpy The Xlib Display to query.
+ * @return The dimensions of the main monitor.
+ */
 ScreenDimensions screen_dimensions(Display *dpy) {
   int screen_width, screen_height, screen_id;
   screen_id = DefaultScreen(dpy);
@@ -85,6 +104,7 @@ ScreenDimensions screen_dimensions(Display *dpy) {
   return {screen_width, screen_height};
 }
 
+/// @brief Get the screen size and update all the values for taskbar sizing.
 void updateScreenSize() {
   ScreenDimensions screen_dim = screen_dimensions(dpy);
   scaling_ratio   = std::max((double)screen_dim.width / 1920, 1.0);
@@ -97,6 +117,11 @@ void updateScreenSize() {
   printf("W%d H%d S%lf\n", taskbar_width, taskbar_height, scaling_ratio);
 }
 
+/**
+ * @brief Initialializes the Xlib Window.
+ *
+ * @return The initialized window.
+ */
 Window initializeWindow() {
   dpy = XOpenDisplay(NULL);
   if (dpy == NULL) {
@@ -120,6 +145,12 @@ Window initializeWindow() {
   return w;
 }
 
+/**
+ * @brief Initializes the Cairo surfaces
+ *
+ * Creates cairo_surface and shape_cairo
+ * @param w The Window to initalize the surfaces for.
+ */
 void initializeCairo(Window w) {
   surface = cairo_xlib_surface_create(dpy, w, DefaultVisual(dpy, 0), taskbar_width, taskbar_height);
   cairo = cairo_create(surface);
@@ -132,6 +163,7 @@ void initializeCairo(Window w) {
   shape_cairo = cairo_create(shape_surface);
 }
 
+/// @brief Initialize the MkShift layout.
 void initializeLayout() {
   YGNodeRef root_node = YGNodeNew();
   YGNodeStyleSetWidthPercent(root_node, 100.0);
@@ -164,6 +196,12 @@ void initializeLayout() {
 }
 
 #warning TODO: get_visible_windows
+/**
+ * @brief Get a list of all visible windows on the screen.
+ *
+ * @return The list of Windows.
+ * @exception SIGSEGV currently.
+ */
 std::vector<Window> get_visible_windows() {
   Atom ret;
   int format, status;
@@ -174,10 +212,18 @@ std::vector<Window> get_visible_windows() {
 }
 
 #warning TODO: hide_unhide
+/**
+ * @brief Calculate's whether the dock should be hidden and applies that.
+ *
+ * TODO: currently unimplemented.
+ *
+ * @param w The Window to use to determine this.
+ */
 void hide_unhide(Window w) {
   
 }
 
+/// Main entrypoint to KDock
 int main() {
   Window w = initializeWindow();
   initializeCairo(w);
